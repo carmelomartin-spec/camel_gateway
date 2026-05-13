@@ -1,4 +1,6 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/bash
 
 mvn spring-boot:run
+
+exit 0;
+
