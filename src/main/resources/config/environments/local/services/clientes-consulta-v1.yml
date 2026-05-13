@@ -11,3 +11,8 @@ service:
     type: rest
     method: GET
     endpoint_url: http://localhost:9090/clientes/demo?bridgeEndpoint=true
+
+  rate_limit:
+    enabled: true
+    requests: 60
+    window_seconds: 60

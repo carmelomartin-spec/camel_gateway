@@ -1,10 +1,10 @@
 package com.desigual.camelgateway.service;
 
+import com.desigual.camelgateway.config.GatewayProperties;
 import com.desigual.camelgateway.model.config.ServiceDefinition;
 import com.desigual.camelgateway.model.config.ServiceDefinitionFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -18,10 +18,10 @@ import java.util.List;
 public class ServiceCatalogLoader {
 
     @Bean
-    public ServiceCatalog serviceCatalog(@Value("${gateway.environment:local}") String environment) throws Exception {
+    public ServiceCatalog serviceCatalog(GatewayProperties gatewayProperties) throws Exception {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource[] resources = resolver.getResources(
-            "classpath*:config/environments/" + environment + "/services/*.yml"
+            "classpath*:config/environments/" + gatewayProperties.getEnvironment() + "/services/*.yml"
         );
 
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());

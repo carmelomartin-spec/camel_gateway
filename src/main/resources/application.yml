@@ -10,6 +10,10 @@ gateway:
     host: 0.0.0.0
     port: 8082
   environment: local
+  rate-limit:
+    enabled: true
+    requests: 60
+    window-seconds: 60
 
 management:
   endpoints:

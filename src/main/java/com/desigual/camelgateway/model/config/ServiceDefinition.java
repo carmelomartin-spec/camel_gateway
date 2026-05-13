@@ -1,5 +1,7 @@
 package com.desigual.camelgateway.model.config;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ServiceDefinition {
 
     private String id;
@@ -7,6 +9,9 @@ public class ServiceDefinition {
     private String status;
     private ExposureDefinition exposure;
     private BackendDefinition backend;
+
+    @JsonProperty("rate_limit")
+    private RateLimitDefinition rateLimit;
 
     public String getId() {
         return id;
@@ -46,5 +51,13 @@ public class ServiceDefinition {
 
     public void setBackend(BackendDefinition backend) {
         this.backend = backend;
+    }
+
+    public RateLimitDefinition getRateLimit() {
+        return rateLimit;
+    }
+
+    public void setRateLimit(RateLimitDefinition rateLimit) {
+        this.rateLimit = rateLimit;
     }
 }
