@@ -29,7 +29,9 @@ public class ProxyRouteBuilder extends RouteBuilder {
         onException(Exception.class)
             .handled(true)
             .to("bean:errorNormalizerProcessor")
-            .to("bean:maskingProcessor")
+            .to("bean:maskingProcessor");
+
+        onCompletion()
             .to("bean:auditProcessor")
             .to("bean:metricsProcessor");
 
@@ -55,9 +57,7 @@ public class ProxyRouteBuilder extends RouteBuilder {
                     .to("bean:requestMappingProcessor")
                     .toD("${exchangeProperty.backendEndpoint}")
                     .to("bean:responseMappingProcessor")
-                    .to("bean:maskingProcessor")
-                    .to("bean:auditProcessor")
-                    .to("bean:metricsProcessor");
+                    .to("bean:maskingProcessor");
             }
         }
     }
