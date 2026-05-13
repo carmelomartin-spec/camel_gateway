@@ -9,6 +9,6 @@ public class RequestMappingProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        System.out.println("RequestMappingProcessor: en este processor se transforma la peticion del proxy al formato esperado por el backend.");
+        System.out.printf("%-32s En este processor se transforma la peticion del proxy al formato esperado por el backend.%n", "RequestMappingProcessor:");
     }
 }

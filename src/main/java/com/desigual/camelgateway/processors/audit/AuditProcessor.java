@@ -9,6 +9,6 @@ public class AuditProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        System.out.println("AuditProcessor: en este processor se registra la llamada en auditoria.");
+        System.out.printf("%-32s En este processor se registra la llamada en auditoria.%n", "AuditProcessor:");
     }
 }

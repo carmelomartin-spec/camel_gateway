@@ -9,6 +9,6 @@ public class MaskingProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        System.out.println("MaskingProcessor: en este processor se enmascaran o eliminan datos sensibles.");
+        System.out.printf("%-32s En este processor se enmascaran o eliminan datos sensibles.%n", "MaskingProcessor:");
     }
 }

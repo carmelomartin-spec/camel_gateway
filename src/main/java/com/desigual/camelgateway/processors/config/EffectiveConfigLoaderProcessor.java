@@ -9,6 +9,6 @@ public class EffectiveConfigLoaderProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        System.out.println("EffectiveConfigLoaderProcessor: en este processor se carga la configuracion efectiva desde YAML, BBDD y Vault.");
+        System.out.printf("%-32s En este processor se carga la configuracion efectiva desde YAML, BBDD y Vault.%n","EffectiveConfigLoaderProcessor:");
     }
 }

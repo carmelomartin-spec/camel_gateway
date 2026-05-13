@@ -9,6 +9,6 @@ public class RateLimitProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        System.out.println("RateLimitProcessor: en este processor se comprueban los limites de uso del consumidor y del servicio.");
+        System.out.printf("%-32s En este processor se comprueban los limites de uso del consumidor y del servicio.%n", "RateLimitProcessor:");
     }
 }

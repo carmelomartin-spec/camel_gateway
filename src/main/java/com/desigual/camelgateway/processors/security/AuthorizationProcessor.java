@@ -9,6 +9,6 @@ public class AuthorizationProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        System.out.println("AuthorizationProcessor: en este processor se autoriza el acceso del consumidor al servicio.");
+        System.out.printf("%-32s En este processor se autoriza el acceso del consumidor al servicio.%n", "AuthorizationProcessor:");
     }
 }

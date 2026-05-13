@@ -9,6 +9,6 @@ public class ErrorNormalizerProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        System.out.println("ErrorNormalizerProcessor: en este processor se normalizan errores a respuestas HTTP controladas.");
+        System.out.printf("%-32s En este processor se normalizan errores a respuestas HTTP controladas.%n", "ErrorNormalizerProcessor:");
     }
 }

@@ -9,6 +9,6 @@ public class MetricsProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        System.out.println("MetricsProcessor: en este processor se registran metricas para Prometheus y Grafana.");
+        System.out.printf("%-32s En este processor se registran metricas para Prometheus y Grafana.%n", "MetricsProcessor:");
     }
 }
