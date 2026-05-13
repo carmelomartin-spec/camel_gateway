@@ -9,6 +9,6 @@ public class RouteResolverProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        // TODO Resolve logical service from HTTP method and path.
+        System.out.println("RouteResolverProcessor: en este processor se resuelve el servicio logico a partir del metodo y path HTTP.");
     }
 }

@@ -9,6 +9,6 @@ public class MaskingProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        // TODO Mask or remove sensitive fields from response and audit data.
+        System.out.println("MaskingProcessor: en este processor se enmascaran o eliminan datos sensibles.");
     }
 }

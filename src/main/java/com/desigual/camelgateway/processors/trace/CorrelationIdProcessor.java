@@ -9,6 +9,6 @@ public class CorrelationIdProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        // TODO Ensure every request has a correlation id.
+        System.out.println("CorrelationIdProcessor: en este processor se garantiza que cada peticion tenga un correlation id.");
     }
 }

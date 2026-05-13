@@ -5,6 +5,12 @@ spring:
 server:
   port: 8081
 
+gateway:
+  proxy:
+    host: 0.0.0.0
+    port: 8082
+  environment: local
+
 management:
   endpoints:
     web:

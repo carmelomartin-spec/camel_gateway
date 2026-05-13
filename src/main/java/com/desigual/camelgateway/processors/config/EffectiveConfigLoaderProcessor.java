@@ -9,6 +9,6 @@ public class EffectiveConfigLoaderProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        // TODO Load effective service configuration from YAML, database overrides and secrets.
+        System.out.println("EffectiveConfigLoaderProcessor: en este processor se carga la configuracion efectiva desde YAML, BBDD y Vault.");
     }
 }

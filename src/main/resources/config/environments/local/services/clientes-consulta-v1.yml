@@ -1,0 +1,13 @@
+service:
+  id: clientes-consulta-v1
+  name: Consulta de cliente demo
+  status: active
+
+  exposure:
+    base_path: /api/v1/clientes/demo
+    methods: [GET]
+
+  backend:
+    type: rest
+    method: GET
+    endpoint_url: http://localhost:9090/clientes/demo?bridgeEndpoint=true

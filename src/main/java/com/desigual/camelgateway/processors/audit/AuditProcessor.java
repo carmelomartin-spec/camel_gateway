@@ -9,6 +9,6 @@ public class AuditProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        // TODO Persist or emit audit event for the request.
+        System.out.println("AuditProcessor: en este processor se registra la llamada en auditoria.");
     }
 }

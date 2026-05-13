@@ -9,6 +9,6 @@ public class AuthProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        // TODO Authenticate the consumer.
+        System.out.println("AuthProcessor: en este processor se autentica al consumidor.");
     }
 }

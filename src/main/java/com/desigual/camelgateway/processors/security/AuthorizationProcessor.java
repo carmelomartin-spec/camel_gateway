@@ -9,6 +9,6 @@ public class AuthorizationProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        // TODO Authorize consumer access to the resolved service.
+        System.out.println("AuthorizationProcessor: en este processor se autoriza el acceso del consumidor al servicio.");
     }
 }

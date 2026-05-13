@@ -9,6 +9,6 @@ public class ResponseMappingProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        // TODO Transform backend response JSON into proxy response JSON.
+        System.out.println("ResponseMappingProcessor: en este processor se transforma la respuesta del backend al contrato externo del proxy.");
     }
 }

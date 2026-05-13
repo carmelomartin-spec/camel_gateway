@@ -9,6 +9,6 @@ public class ContractValidationProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        // TODO Validate request body against the proxy contract.
+        System.out.println("ContractValidationProcessor: en este processor se valida la peticion contra el contrato publicado por el proxy.");
     }
 }
