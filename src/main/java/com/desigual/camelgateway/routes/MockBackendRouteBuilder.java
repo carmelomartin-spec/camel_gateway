@@ -1,5 +1,6 @@
 package com.desigual.camelgateway.routes;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,7 @@ public class MockBackendRouteBuilder extends RouteBuilder {
     public void configure() {
         from("undertow:http://0.0.0.0:9090/clientes/demo?httpMethodRestrict=GET")
             .routeId("mock-backend-clientes-demo")
-            .setHeader("Content-Type", constant("application/json"))
+            .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
             .setBody(constant("""
                 {
                   "customerId": "12345",
