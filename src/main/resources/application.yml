@@ -1,6 +1,11 @@
 spring:
   application:
     name: camel-gateway
+  datasource:
+    url: ${GATEWAY_DB_URL:jdbc:postgresql://192.168.0.13:5432/camel_gateway_ops}
+    username: ${GATEWAY_DB_USERNAME:desigual}
+    password: ${GATEWAY_DB_PASSWORD:desigual}
+    driver-class-name: org.postgresql.Driver
 
 server:
   port: 8081
@@ -14,6 +19,8 @@ gateway:
     enabled: true
     requests: 60
     window-seconds: 60
+  authorization:
+    enabled: true
 
 management:
   endpoints:

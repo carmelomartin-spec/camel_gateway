@@ -8,6 +8,7 @@ public class GatewayProperties {
     private String environment = "local";
     private Proxy proxy = new Proxy();
     private RateLimit rateLimit = new RateLimit();
+    private Authorization authorization = new Authorization();
 
     public String getEnvironment() {
         return environment;
@@ -31,6 +32,14 @@ public class GatewayProperties {
 
     public void setRateLimit(RateLimit rateLimit) {
         this.rateLimit = rateLimit;
+    }
+
+    public Authorization getAuthorization() {
+        return authorization;
+    }
+
+    public void setAuthorization(Authorization authorization) {
+        this.authorization = authorization;
     }
 
     public static class Proxy {
@@ -83,6 +92,19 @@ public class GatewayProperties {
 
         public void setWindowSeconds(long windowSeconds) {
             this.windowSeconds = windowSeconds;
+        }
+    }
+
+    public static class Authorization {
+
+        private boolean enabled = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
         }
     }
 }

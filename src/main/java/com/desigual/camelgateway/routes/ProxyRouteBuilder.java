@@ -3,6 +3,7 @@ package com.desigual.camelgateway.routes;
 import com.desigual.camelgateway.config.GatewayProperties;
 import com.desigual.camelgateway.model.config.RateLimitDefinition;
 import com.desigual.camelgateway.model.config.ServiceDefinition;
+import com.desigual.camelgateway.processors.security.AuthorizationProcessor;
 import com.desigual.camelgateway.processors.ratelimit.RateLimitProcessor;
 import com.desigual.camelgateway.service.ServiceCatalog;
 import org.apache.camel.Exchange;
@@ -68,8 +69,18 @@ public class ProxyRouteBuilder extends RouteBuilder {
                     .to("bean:routeResolverProcessor")
                     .to("bean:effectiveConfigLoaderProcessor")
                     .to("bean:authProcessor")
-                    .to("bean:authorizationProcessor")
-                    .to("bean:rateLimitProcessor");
+                    .to("bean:authorizationProcessor?method=prepare");
+
+                route.choice()
+                    .when(header(AuthorizationProcessor.HEADER_AUTHORIZATION_ALLOWED).isEqualTo(true))
+                        .log("Authorization disabled or pre-approved for ${exchangeProperty.serviceId}")
+                    .otherwise()
+                        .to("sql:classpath:sql/authorize-consumer.sql?outputType=SelectOne&outputHeader="
+                            + AuthorizationProcessor.HEADER_AUTHORIZATION_ALLOWED)
+                        .to("bean:authorizationProcessor?method=enforce")
+                    .end();
+
+                route.to("bean:rateLimitProcessor");
 
                 EffectiveRateLimit rateLimit = resolveRateLimit(service);
                 if (rateLimit.enabled() && rateLimit.requests() > 0) {
