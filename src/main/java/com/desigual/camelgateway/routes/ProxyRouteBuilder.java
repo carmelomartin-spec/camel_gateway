@@ -1,6 +1,7 @@
 package com.desigual.camelgateway.routes;
 
 import com.desigual.camelgateway.config.GatewayProperties;
+import com.desigual.camelgateway.model.config.AuditDefinition;
 import com.desigual.camelgateway.model.config.MetricsDefinition;
 import com.desigual.camelgateway.model.config.RateLimitDefinition;
 import com.desigual.camelgateway.model.config.ServiceDefinition;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 public class ProxyRouteBuilder extends RouteBuilder {
 
     private static final String PROPERTY_METRICS_ENABLED = "metricsEnabled";
+    private static final String PROPERTY_AUDIT_ENABLED = "auditEnabled";
     private static final String HEADER_GATEWAY_METRIC_STATUS = "GatewayMetricStatus";
 
     private final ServiceCatalog serviceCatalog;
@@ -69,7 +71,11 @@ public class ProxyRouteBuilder extends RouteBuilder {
                         + HEADER_GATEWAY_METRIC_STATUS + "}")
                     .removeHeader(HEADER_GATEWAY_METRIC_STATUS)
             .end()
-            .to("bean:auditProcessor");
+            .choice()
+                .when(exchangeProperty(PROPERTY_AUDIT_ENABLED).isEqualTo(true))
+                    .to("bean:auditProcessor?method=prepare")
+                    .to("sql:classpath:sql/insert-audit-event.sql")
+            .end();
 
         for (ServiceDefinition service : serviceCatalog.getServices()) {
             if (!"active".equalsIgnoreCase(service.getStatus())) {
@@ -83,7 +89,10 @@ public class ProxyRouteBuilder extends RouteBuilder {
                     .setProperty("backendType", constant(service.getBackend().getType()))
                     .setProperty("backendEndpoint", constant(service.getBackend().getEndpointUrl()))
                     .setProperty(PROPERTY_METRICS_ENABLED, constant(resolveMetricsEnabled(service)))
+                    .setProperty(PROPERTY_AUDIT_ENABLED, constant(resolveAuditEnabled(service)))
                     .setHeader(Exchange.HTTP_METHOD, constant(service.getBackend().getMethod()));
+
+                route.to("bean:auditProcessor?method=start");
 
                 route.choice()
                     .when(exchangeProperty(PROPERTY_METRICS_ENABLED).isEqualTo(true))
@@ -125,6 +134,13 @@ public class ProxyRouteBuilder extends RouteBuilder {
                     .to("bean:maskingProcessor");
             }
         }
+    }
+
+    private boolean resolveAuditEnabled(ServiceDefinition service) {
+        AuditDefinition audit = service.getAudit();
+        return audit != null && audit.getEnabled() != null
+            ? audit.getEnabled()
+            : gatewayProperties.getAudit().isEnabled();
     }
 
     private boolean resolveMetricsEnabled(ServiceDefinition service) {

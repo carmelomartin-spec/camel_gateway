@@ -10,6 +10,7 @@ public class GatewayProperties {
     private RateLimit rateLimit = new RateLimit();
     private Authorization authorization = new Authorization();
     private Metrics metrics = new Metrics();
+    private Audit audit = new Audit();
 
     public String getEnvironment() {
         return environment;
@@ -49,6 +50,14 @@ public class GatewayProperties {
 
     public void setMetrics(Metrics metrics) {
         this.metrics = metrics;
+    }
+
+    public Audit getAudit() {
+        return audit;
+    }
+
+    public void setAudit(Audit audit) {
+        this.audit = audit;
     }
 
     public static class Proxy {
@@ -118,6 +127,19 @@ public class GatewayProperties {
     }
 
     public static class Metrics {
+
+        private boolean enabled = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+
+    public static class Audit {
 
         private boolean enabled = true;
 

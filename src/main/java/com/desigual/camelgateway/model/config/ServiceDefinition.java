@@ -15,6 +15,8 @@ public class ServiceDefinition {
 
     private MetricsDefinition metrics;
 
+    private AuditDefinition audit;
+
     public String getId() {
         return id;
     }
@@ -69,5 +71,13 @@ public class ServiceDefinition {
 
     public void setMetrics(MetricsDefinition metrics) {
         this.metrics = metrics;
+    }
+
+    public AuditDefinition getAudit() {
+        return audit;
+    }
+
+    public void setAudit(AuditDefinition audit) {
+        this.audit = audit;
     }
 }

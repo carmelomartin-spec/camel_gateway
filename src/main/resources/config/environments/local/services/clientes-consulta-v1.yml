@@ -19,3 +19,6 @@ service:
 
   metrics:
     enabled: true
+
+  audit:
+    enabled: true
