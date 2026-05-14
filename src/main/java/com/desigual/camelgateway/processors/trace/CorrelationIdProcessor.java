@@ -14,8 +14,6 @@ public class CorrelationIdProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        System.out.printf("%-32s En este processor se garantiza que cada peticion tenga un correlation id.%n", "CorrelationIdProcessor:");
-
         String correlationId = exchange.getMessage().getHeader(HEADER_CORRELATION_ID, String.class);
         if (correlationId == null || correlationId.isBlank()) {
             correlationId = UUID.randomUUID().toString();

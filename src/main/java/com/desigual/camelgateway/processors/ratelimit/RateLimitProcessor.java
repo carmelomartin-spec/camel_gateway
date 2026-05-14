@@ -18,8 +18,6 @@ public class RateLimitProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        System.out.printf("%-32s En este processor se identifica el consumidor para aplicar throttle.%n", "RateLimitProcessor:");
-
         exchange.getMessage().setHeader(HEADER_RATE_LIMIT_CONSUMER, resolveConsumerId(exchange));
     }
 

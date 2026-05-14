@@ -9,6 +9,5 @@ public class ResponseMappingProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        System.out.printf("%-32s En este processor se transforma la respuesta del backend al contrato externo del proxy.%n", "ResponseMappingProcessor:");
     }
 }

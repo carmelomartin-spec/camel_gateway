@@ -60,8 +60,6 @@ public class AuditProcessor implements Processor {
     }
 
     public void prepare(Exchange exchange) {
-        System.out.printf("%-32s En este processor se preparan campos para auditoria.%n", "AuditProcessor:");
-
         exchange.getMessage().setHeader(HEADER_AUDIT_CORRELATION_ID, exchange.getProperty(
             CorrelationIdProcessor.PROPERTY_CORRELATION_ID,
             exchange.getExchangeId(),

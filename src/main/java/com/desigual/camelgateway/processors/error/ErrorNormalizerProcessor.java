@@ -9,8 +9,6 @@ public class ErrorNormalizerProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) {
-        System.out.printf("%-32s En este processor se normalizan errores a respuestas HTTP controladas.%n", "ErrorNormalizerProcessor:");
-
         Exception exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         String message = exception != null ? exception.getMessage() : "Unexpected gateway error";
 

@@ -32,8 +32,6 @@ public class AuthorizationProcessor implements Processor {
     }
 
     public void prepare(Exchange exchange) {
-        System.out.printf("%-32s En este processor se prepara la autorizacion del consumidor.%n", "AuthorizationProcessor:");
-
         if (!enabled) {
             exchange.getMessage().setHeader(HEADER_AUTHORIZATION_ALLOWED, true);
             return;
