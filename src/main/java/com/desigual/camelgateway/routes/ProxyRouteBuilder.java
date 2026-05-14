@@ -5,6 +5,7 @@ import com.desigual.camelgateway.model.config.AuditDefinition;
 import com.desigual.camelgateway.model.config.MetricsDefinition;
 import com.desigual.camelgateway.model.config.RateLimitDefinition;
 import com.desigual.camelgateway.model.config.ServiceDefinition;
+import com.desigual.camelgateway.processors.error.GatewayErrorCodes;
 import com.desigual.camelgateway.processors.security.AuthorizationProcessor;
 import com.desigual.camelgateway.processors.ratelimit.RateLimitProcessor;
 import com.desigual.camelgateway.service.ServiceCatalog;
@@ -19,6 +20,7 @@ public class ProxyRouteBuilder extends RouteBuilder {
 
     private static final String PROPERTY_METRICS_ENABLED = "metricsEnabled";
     private static final String PROPERTY_AUDIT_ENABLED = "auditEnabled";
+    private static final String PROPERTY_REQUEST_PATH = "requestPath";
     private static final String HEADER_GATEWAY_METRIC_STATUS = "GatewayMetricStatus";
 
     private final ServiceCatalog serviceCatalog;
@@ -40,6 +42,7 @@ public class ProxyRouteBuilder extends RouteBuilder {
     public void configure() {
         onException(ThrottlerRejectedExecutionException.class)
             .handled(true)
+            .setProperty(GatewayErrorCodes.PROPERTY_ERROR_CODE, constant(GatewayErrorCodes.RATE_LIMIT_EXCEEDED))
             .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(429))
             .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
             .setBody(constant("""
@@ -88,6 +91,7 @@ public class ProxyRouteBuilder extends RouteBuilder {
                     .setProperty("serviceId", constant(service.getId()))
                     .setProperty("backendType", constant(service.getBackend().getType()))
                     .setProperty("backendEndpoint", constant(service.getBackend().getEndpointUrl()))
+                    .setProperty(PROPERTY_REQUEST_PATH, constant(service.getExposure().getBasePath()))
                     .setProperty(PROPERTY_METRICS_ENABLED, constant(resolveMetricsEnabled(service)))
                     .setProperty(PROPERTY_AUDIT_ENABLED, constant(resolveAuditEnabled(service)))
                     .setHeader(Exchange.HTTP_METHOD, constant(service.getBackend().getMethod()));

@@ -1,6 +1,7 @@
 package com.desigual.camelgateway.processors.security;
 
 import com.desigual.camelgateway.config.GatewayProperties;
+import com.desigual.camelgateway.processors.error.GatewayErrorCodes;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
@@ -83,6 +84,7 @@ public class AuthorizationProcessor implements Processor {
     }
 
     private void reject(Exchange exchange, int statusCode, String error, String message) {
+        exchange.setProperty(GatewayErrorCodes.PROPERTY_ERROR_CODE, error);
         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, statusCode);
         exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/json");
         exchange.getMessage().setBody("""

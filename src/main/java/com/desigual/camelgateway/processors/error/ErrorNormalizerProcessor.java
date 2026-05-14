@@ -14,6 +14,7 @@ public class ErrorNormalizerProcessor implements Processor {
         Exception exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         String message = exception != null ? exception.getMessage() : "Unexpected gateway error";
 
+        exchange.setProperty(GatewayErrorCodes.PROPERTY_ERROR_CODE, GatewayErrorCodes.GATEWAY_ERROR);
         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 502);
         exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/json");
         exchange.getMessage().setBody("""
