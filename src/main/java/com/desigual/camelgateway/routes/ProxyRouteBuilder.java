@@ -1,6 +1,7 @@
 package com.desigual.camelgateway.routes;
 
 import com.desigual.camelgateway.config.GatewayProperties;
+import com.desigual.camelgateway.model.config.MetricsDefinition;
 import com.desigual.camelgateway.model.config.RateLimitDefinition;
 import com.desigual.camelgateway.model.config.ServiceDefinition;
 import com.desigual.camelgateway.processors.security.AuthorizationProcessor;
@@ -14,6 +15,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ProxyRouteBuilder extends RouteBuilder {
+
+    private static final String PROPERTY_METRICS_ENABLED = "metricsEnabled";
+    private static final String HEADER_GATEWAY_METRIC_STATUS = "GatewayMetricStatus";
 
     private final ServiceCatalog serviceCatalog;
     private final GatewayProperties gatewayProperties;
@@ -50,8 +54,22 @@ public class ProxyRouteBuilder extends RouteBuilder {
             .to("bean:maskingProcessor");
 
         onCompletion()
-            .to("bean:auditProcessor")
-            .to("bean:metricsProcessor");
+            .choice()
+                .when(exchangeProperty(PROPERTY_METRICS_ENABLED).isEqualTo(true))
+                    .setHeader(HEADER_GATEWAY_METRIC_STATUS, simple("${header.CamelHttpResponseCode}"))
+                    .choice()
+                        .when(header(HEADER_GATEWAY_METRIC_STATUS).isNull())
+                            .setHeader(HEADER_GATEWAY_METRIC_STATUS, constant("200"))
+                    .end()
+                    .toD("micrometer:counter:gateway.proxy.requests"
+                        + "?tags=serviceId=${exchangeProperty.serviceId},method=${header.CamelHttpMethod},status=${header."
+                        + HEADER_GATEWAY_METRIC_STATUS + "}")
+                    .toD("micrometer:timer:gateway.proxy.duration"
+                        + "?action=stop&tags=serviceId=${exchangeProperty.serviceId},method=${header.CamelHttpMethod},status=${header."
+                        + HEADER_GATEWAY_METRIC_STATUS + "}")
+                    .removeHeader(HEADER_GATEWAY_METRIC_STATUS)
+            .end()
+            .to("bean:auditProcessor");
 
         for (ServiceDefinition service : serviceCatalog.getServices()) {
             if (!"active".equalsIgnoreCase(service.getStatus())) {
@@ -64,7 +82,16 @@ public class ProxyRouteBuilder extends RouteBuilder {
                     .setProperty("serviceId", constant(service.getId()))
                     .setProperty("backendType", constant(service.getBackend().getType()))
                     .setProperty("backendEndpoint", constant(service.getBackend().getEndpointUrl()))
-                    .setHeader(Exchange.HTTP_METHOD, constant(service.getBackend().getMethod()))
+                    .setProperty(PROPERTY_METRICS_ENABLED, constant(resolveMetricsEnabled(service)))
+                    .setHeader(Exchange.HTTP_METHOD, constant(service.getBackend().getMethod()));
+
+                route.choice()
+                    .when(exchangeProperty(PROPERTY_METRICS_ENABLED).isEqualTo(true))
+                        .toD("micrometer:timer:gateway.proxy.duration"
+                            + "?action=start&tags=serviceId=${exchangeProperty.serviceId},method=${header.CamelHttpMethod}")
+                    .end();
+
+                route
                     .to("bean:correlationIdProcessor")
                     .to("bean:routeResolverProcessor")
                     .to("bean:effectiveConfigLoaderProcessor")
@@ -98,6 +125,13 @@ public class ProxyRouteBuilder extends RouteBuilder {
                     .to("bean:maskingProcessor");
             }
         }
+    }
+
+    private boolean resolveMetricsEnabled(ServiceDefinition service) {
+        MetricsDefinition metrics = service.getMetrics();
+        return metrics != null && metrics.getEnabled() != null
+            ? metrics.getEnabled()
+            : gatewayProperties.getMetrics().isEnabled();
     }
 
     private String buildUndertowUri(ServiceDefinition service, String method) {

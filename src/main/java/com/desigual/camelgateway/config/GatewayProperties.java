@@ -9,6 +9,7 @@ public class GatewayProperties {
     private Proxy proxy = new Proxy();
     private RateLimit rateLimit = new RateLimit();
     private Authorization authorization = new Authorization();
+    private Metrics metrics = new Metrics();
 
     public String getEnvironment() {
         return environment;
@@ -40,6 +41,14 @@ public class GatewayProperties {
 
     public void setAuthorization(Authorization authorization) {
         this.authorization = authorization;
+    }
+
+    public Metrics getMetrics() {
+        return metrics;
+    }
+
+    public void setMetrics(Metrics metrics) {
+        this.metrics = metrics;
     }
 
     public static class Proxy {
@@ -96,6 +105,19 @@ public class GatewayProperties {
     }
 
     public static class Authorization {
+
+        private boolean enabled = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+
+    public static class Metrics {
 
         private boolean enabled = true;
 

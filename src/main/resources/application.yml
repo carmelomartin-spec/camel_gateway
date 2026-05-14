@@ -21,6 +21,8 @@ gateway:
     window-seconds: 60
   authorization:
     enabled: true
+  metrics:
+    enabled: true
 
 management:
   endpoints:
@@ -36,3 +38,11 @@ camel:
   main:
     name: camel-gateway
     run-controller: true
+  metrics:
+    enable-route-policy: true
+    enable-route-event-notifier: true
+    enable-exchange-event-notifier: true
+    enable-message-history: false
+    route-policy-level: route
+    uri-tag-enabled: true
+    uri-tag-dynamic: false

@@ -13,6 +13,8 @@ public class ServiceDefinition {
     @JsonProperty("rate_limit")
     private RateLimitDefinition rateLimit;
 
+    private MetricsDefinition metrics;
+
     public String getId() {
         return id;
     }
@@ -59,5 +61,13 @@ public class ServiceDefinition {
 
     public void setRateLimit(RateLimitDefinition rateLimit) {
         this.rateLimit = rateLimit;
+    }
+
+    public MetricsDefinition getMetrics() {
+        return metrics;
+    }
+
+    public void setMetrics(MetricsDefinition metrics) {
+        this.metrics = metrics;
     }
 }

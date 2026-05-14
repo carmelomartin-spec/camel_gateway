@@ -16,3 +16,6 @@ service:
     enabled: true
     requests: 60
     window_seconds: 60
+
+  metrics:
+    enabled: true
