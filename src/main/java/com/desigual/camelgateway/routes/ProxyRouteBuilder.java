@@ -9,8 +9,10 @@ import com.desigual.camelgateway.processors.error.GatewayErrorCodes;
 import com.desigual.camelgateway.processors.security.AuthorizationProcessor;
 import com.desigual.camelgateway.processors.ratelimit.RateLimitProcessor;
 import com.desigual.camelgateway.service.ServiceCatalog;
+import io.micrometer.core.instrument.Tags;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.ThrottlerRejectedExecutionException;
 import org.springframework.stereotype.Component;
@@ -66,12 +68,10 @@ public class ProxyRouteBuilder extends RouteBuilder {
                         .when(header(HEADER_GATEWAY_METRIC_STATUS).isNull())
                             .setHeader(HEADER_GATEWAY_METRIC_STATUS, constant("200"))
                     .end()
-                    .toD("micrometer:counter:gateway.proxy.requests"
-                        + "?tags=serviceId=${exchangeProperty.serviceId},method=${header.CamelHttpMethod},status=${header."
-                        + HEADER_GATEWAY_METRIC_STATUS + "}")
-                    .toD("micrometer:timer:gateway.proxy.duration"
-                        + "?action=stop&tags=serviceId=${exchangeProperty.serviceId},method=${header.CamelHttpMethod},status=${header."
-                        + HEADER_GATEWAY_METRIC_STATUS + "}")
+                    .process(this::setCompletionMetricTags)
+                    .to("micrometer:counter:gateway.proxy.requests")
+                    .to("micrometer:timer:gateway.proxy.duration?action=stop")
+                    .removeHeader(MicrometerConstants.HEADER_METRIC_TAGS)
                     .removeHeader(HEADER_GATEWAY_METRIC_STATUS)
             .end()
             .choice()
@@ -100,8 +100,9 @@ public class ProxyRouteBuilder extends RouteBuilder {
 
                 route.choice()
                     .when(exchangeProperty(PROPERTY_METRICS_ENABLED).isEqualTo(true))
-                        .toD("micrometer:timer:gateway.proxy.duration"
-                            + "?action=start&tags=serviceId=${exchangeProperty.serviceId},method=${header.CamelHttpMethod}")
+                        .process(this::setStartMetricTags)
+                        .to("micrometer:timer:gateway.proxy.duration?action=start")
+                        .removeHeader(MicrometerConstants.HEADER_METRIC_TAGS)
                     .end();
 
                 route
@@ -138,6 +139,25 @@ public class ProxyRouteBuilder extends RouteBuilder {
                     .to("bean:maskingProcessor");
             }
         }
+    }
+
+    private void setStartMetricTags(Exchange exchange) {
+        exchange.getMessage().setHeader(MicrometerConstants.HEADER_METRIC_TAGS, Tags.of(
+            "serviceId", resolveTagValue(exchange.getProperty("serviceId", String.class)),
+            "method", resolveTagValue(exchange.getMessage().getHeader(Exchange.HTTP_METHOD, String.class))
+        ));
+    }
+
+    private void setCompletionMetricTags(Exchange exchange) {
+        exchange.getMessage().setHeader(MicrometerConstants.HEADER_METRIC_TAGS, Tags.of(
+            "serviceId", resolveTagValue(exchange.getProperty("serviceId", String.class)),
+            "method", resolveTagValue(exchange.getMessage().getHeader(Exchange.HTTP_METHOD, String.class)),
+            "status", resolveTagValue(exchange.getMessage().getHeader(HEADER_GATEWAY_METRIC_STATUS, String.class))
+        ));
+    }
+
+    private String resolveTagValue(String value) {
+        return value == null || value.isBlank() ? "unknown" : value;
     }
 
     private boolean resolveAuditEnabled(ServiceDefinition service) {
