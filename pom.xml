@@ -18,7 +18,7 @@
     <description>JSON proxy gateway between n8n and internal TIBCO/.NET services</description>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <camel.version>4.14.7</camel.version>
     </properties>
 
